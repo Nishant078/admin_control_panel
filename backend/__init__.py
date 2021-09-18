@@ -3,9 +3,9 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/api")
 def root():
-    return "<h1>This is admin page<h1>"
+    return "This is admin page api response..........."
 
 
 if __name__ == "__main__":

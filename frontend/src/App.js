@@ -1,33 +1,50 @@
-// import logo from "./logo.svg";
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import $ from "jquery";
+
+let get_list_from_server = async (set_list) => {
+   const request_list_options = {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: "get_list" }),
+   };
+   const response = await fetch("/api", request_list_options);
+   const data = await response.json();
+   console.log(data);
+   if (data["status"] === "OK") set_list(data["list"]);
+};
+
+let submitButtonClicked = (e) => {
+   let text_field_value = $("#text").val();
+   fetch("/api", {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text_field_value: text_field_value }),
+   });
+};
 
 function App() {
-  const [txt, setTxt] = useState("loading.....");
-  fetch("/api")
-    .then((res) => {
-      return res.text();
-    })
-    .then((data) => {
-      setTimeout(() => {
-        setTxt(data);
-      }, 1000);
-    });
-  return <>{txt}</>;
+   const [list, set_list] = useState([]);
+   useEffect(() => {
+      get_list_from_server(set_list);
+   }, []);
+
+   return (
+      <>
+         {list.map((l) => {
+            return <p>{l}</p>;
+         })}
+         <input id="text" type="text" placeholder="List Name" />
+         <input
+            id="xyz"
+            type="button"
+            value="submit"
+            onClick={submitButtonClicked}
+         />
+      </>
+   );
 }
 
 export default App;
-// <header className="App-header">
-//   <img src={logo} className="App-logo" alt="logo" />
-//   <p>
-//     Edit <code>src/App.js</code> and save to reload.
-//   </p>
-//   <a
-//     className="App-link"
-//     href="https://reactjs.org"
-//     target="_blank"
-//     rel="noopener noreferrer"
-//   >
-//     Learn React
-//   </a>
-// </header>

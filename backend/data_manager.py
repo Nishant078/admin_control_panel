@@ -1,6 +1,8 @@
 import os
 import sqlite3
 
+print("data manager is bing imported")
+
 
 class data_manager:
     def __init__(self, verbose):
@@ -37,6 +39,5 @@ class data_manager:
         self.db_connection.commit()
 
     def delete_list(self, list_name):
-        print(f'DELETE FROM list_of_lists WHERE list_name="{list_name}"')
         self.cursor.execute(f'DELETE FROM list_of_lists WHERE list_name="{list_name}"')
         self.db_connection.commit()

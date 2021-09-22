@@ -2,6 +2,17 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import $ from "jquery";
 
+let make_post_request = async (body) => {
+   const request_list_options = {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+   };
+   const response = await fetch("/api", request_list_options);
+   const data = await response.json();
+   return data;
+};
+
 function App() {
    const [list, set_list] = useState([]);
    useEffect(() => {
@@ -9,45 +20,56 @@ function App() {
    }, []);
 
    let get_list_from_server = async () => {
-      const request_list_options = {
-         method: "post",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ command: "get_list" }),
-      };
-      const response = await fetch("/api", request_list_options);
-      const data = await response.json();
+      const data = await make_post_request({ command: "get_list" });
       console.log(data);
       if (data["status"] === "OK") set_list(data["list"]);
    };
 
-   let submitButtonClicked = (e) => {
-      let list_name = $("#text").val();
-      if (!list.includes(list_name)) {
-         fetch("/api", {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-               command: "add_list",
-               list_name: list_name,
-            }),
-         });
+   let add_list_clicked = async () => {
+      let list_name = $("#list_name_input").val();
+      if (!list.includes(list_name) && list_name !== "") {
+         await make_post_request({ command: "add_list", list_name: list_name });
+         await get_list_from_server();
+         $("#list_name_input").val("");
       }
-      get_list_from_server();
+   };
+
+   let delete_list_clicked = async (index) => {
+      console.log(list[index]);
+      await make_post_request({
+         command: "delete_list",
+         list_name: list[index],
+      });
+      await get_list_from_server();
    };
 
    return (
       <>
          {list.map((item, index) => {
-            return <p key={index}>{item}</p>;
+            return (
+               <div key={" " + index}>
+                  <p key={index}>{item}</p>
+                  <input
+                     key={"delete list" + index}
+                     type="button"
+                     value="delete list"
+                     onClick={() => delete_list_clicked(index)}
+                  />
+               </div>
+            );
          })}
-         <input id="text" type="text" placeholder="List Name" />
+         <br key="br" />
          <input
-            id="xyz"
+            key="0"
+            id="list_name_input"
+            type="text"
+            placeholder="List Name"
+         />
+         <input
+            key="1"
             type="button"
-            value="submit"
-            onClick={submitButtonClicked}
+            value="add list"
+            onClick={add_list_clicked}
          />
       </>
    );

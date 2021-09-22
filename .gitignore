@@ -1,2 +1,4 @@
 *.pyc
 backend/data/list_of_lists.json
+backend/db.sqlite3
+backend/db.sqlite3

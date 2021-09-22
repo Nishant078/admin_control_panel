@@ -24,7 +24,11 @@ class data_manager:
         self.db_connection.commit()
 
     def get_list_of_lists(self):
-        return self.cursor.execute("SELECT list_name FROM list_of_lists").fetchall()
+        list_of_lists = self.cursor.execute(
+            "SELECT list_name FROM list_of_lists"
+        ).fetchall()
+        list_of_lists = [l for (l,) in list_of_lists]
+        return list_of_lists
 
     def add_list(self, list_name):
         self.cursor.execute(

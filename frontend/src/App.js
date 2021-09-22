@@ -21,7 +21,6 @@ function App() {
 
    let get_list_from_server = async () => {
       const data = await make_post_request({ command: "get_list" });
-      console.log(data);
       if (data["status"] === "OK") set_list(data["list"]);
    };
 
@@ -35,6 +34,7 @@ function App() {
    };
 
    let delete_list_clicked = async (index) => {
+      console.log(list);
       console.log(list[index]);
       await make_post_request({
          command: "delete_list",

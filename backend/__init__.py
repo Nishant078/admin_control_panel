@@ -1,6 +1,6 @@
+import sqlite3
 from flask import Flask, request, jsonify
 from data_manager import data_manager
-from utility import dump_func_name
 
 config = {}
 app = Flask(__name__)
@@ -9,13 +9,19 @@ dm = data_manager(verbose=True)
 
 def handle_get_list_of_lists():
     list_of_lists = dm.get_list_of_lists()
+    print(list_of_lists)
     res = {"status": "OK", "list": list_of_lists}
     return jsonify(res)
 
 
 def handle_add_list(req):
-    dm.add_list(req["list_name"])
-    res = {"status": "OK"}
+    try:
+        dm.add_list(req["list_name"])
+        res = {"status": "OK"}
+    except sqlite3.IntegrityError as err:
+        res = {"status": "ERROR"}
+        print("can not add list :", req["list_name"])
+        print("ERROR :", err)
     return jsonify(res)
 
 
@@ -37,7 +43,7 @@ def api():
 
     rtn = {
         "status": "ERROR",
-        "message": f'Was not able to process command {request.json["command"]}',
+        "message": f'unknown command {request.json["command"]}',
     }
     return jsonify(rtn)
 

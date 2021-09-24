@@ -1,3 +1,5 @@
 *.pyc
 backend/data/list_of_lists.json
 backend/db.sqlite3
+backend/query.sql
+.vscode/launch.json

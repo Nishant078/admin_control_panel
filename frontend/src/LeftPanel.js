@@ -37,7 +37,7 @@ function LeftPanel(props) {
    });
 
    return (
-      <>
+      <div className="left-panel">
          {list_render}
          <br key="br" />
          <input
@@ -52,7 +52,7 @@ function LeftPanel(props) {
             value="add list"
             onClick={add_list_clicked}
          />
-      </>
+      </div>
    );
 }
 

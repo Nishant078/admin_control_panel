@@ -12,6 +12,7 @@ function App() {
    const get_list_from_server = async () => {
       const data = await make_post_request({ command: "get_list" });
       if (data["status"] === "OK") set_list(data["list"]);
+      console.log(data["list"]);
    };
 
    return <LeftPanel list={list} get_list_from_server={get_list_from_server} />;

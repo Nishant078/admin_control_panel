@@ -19,7 +19,7 @@ def handle_add_list(req):
         res = {"status": "OK"}
     except sqlite3.IntegrityError as err:
         res = {"status": "ERROR"}
-        print("can not add list :", req["list_name"])
+        print("cannot add list :", req["list_name"])
         print("ERROR :", err)
     return jsonify(res)
 

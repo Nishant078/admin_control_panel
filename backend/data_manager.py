@@ -29,7 +29,6 @@ class data_manager:
         """
         self.cursor.execute(query)
         list_of_lists = self.cursor.fetchall()
-        print(list_of_lists)
         list_of_lists = [l for (l,) in list_of_lists]
         return list_of_lists
 

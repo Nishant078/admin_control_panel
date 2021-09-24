@@ -1,8 +1,9 @@
 import React from "react";
 import { make_post_request } from "./Utility";
 import $ from "jquery";
+import { Link } from "react-router-dom";
 
-function LeftPanel(props) {
+const LeftPanel = (props) => {
    const { list, get_list_from_server } = props;
    const add_list_clicked = async () => {
       const list_name = $("#list_name_input").val();
@@ -25,7 +26,9 @@ function LeftPanel(props) {
    list.forEach((item, index) => {
       list_render.push(
          <div key={index}>
-            <p key={index}>{item}</p>
+            <Link to={`/${item}`} key={index}>
+               {item}
+            </Link>
             <input
                key={"btn" + index}
                type="button"
@@ -37,7 +40,7 @@ function LeftPanel(props) {
    });
 
    return (
-      <div className="left-panel">
+      <div className="left-panel" style={{ backgroundColor: "pink" }}>
          {list_render}
          <br key="br" />
          <input
@@ -54,6 +57,6 @@ function LeftPanel(props) {
          />
       </div>
    );
-}
+};
 
 export default LeftPanel;

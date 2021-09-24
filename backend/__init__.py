@@ -9,7 +9,6 @@ dm = data_manager(verbose=True)
 
 def handle_get_list_of_lists():
     list_of_lists = dm.get_list_of_lists()
-    print(list_of_lists)
     res = {"status": "OK", "list": list_of_lists}
     return jsonify(res)
 

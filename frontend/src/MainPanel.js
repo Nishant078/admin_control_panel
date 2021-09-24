@@ -4,13 +4,13 @@ const MainPanel = (props) => {
    const { match } = props;
    if (!match.params.list_name) {
       return (
-         <div className="main-panel" style={{ backgroundColor: "lightblue" }}>
+         <div className="admin-main">
             Please select the list.
          </div>
       );
    } else {
       return (
-         <div className="main-panel" style={{ backgroundColor: "lightblue" }}>
+         <div className="admin-main">
             {match.params.list_name}
          </div>
       );

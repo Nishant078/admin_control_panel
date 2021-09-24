@@ -1,4 +1,4 @@
-import "./App.css";
+import "./App.scss";
 import { useState, useEffect } from "react";
 import LeftPanel from "./LeftPanel";
 import { make_post_request } from "./Utility";

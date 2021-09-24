@@ -2,6 +2,8 @@ import React from "react";
 import { make_post_request } from "./Utility";
 import $ from "jquery";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as icons from '@fortawesome/free-solid-svg-icons'
 
 const LeftPanel = (props) => {
    const { list, get_list_from_server } = props;
@@ -30,23 +32,20 @@ const LeftPanel = (props) => {
    let list_render = [];
    list.forEach((item, index) => {
       list_render.push(
-         <div key={index}>
+         <li key={index}>
             <Link to={`/${item}`} key={index}>
                {item}
             </Link>
-            <input
-               key={"btn" + index}
-               type="button"
-               value="delete list"
-               onClick={() => delete_list_clicked(index)}
-            />
-         </div>
+            <FontAwesomeIcon icon={icons.faTrashAlt} onClick={() => delete_list_clicked(index)} />
+         </li>
       );
    });
 
    return (
-      <div className="left-panel" style={{ backgroundColor: "pink" }}>
-         {list_render}
+      <div className="admin-left">
+         <ul className="admin-listitem">
+            {list_render}
+         </ul>
          <br key="br" />
          <input
             key="list_name_input"

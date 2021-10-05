@@ -5,9 +5,9 @@ import { make_post_request } from "./Utility";
 import MainPanel from "./MainPanel";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-
 const App = (props) => {
    const [list, set_list] = useState([]);
+
    useEffect(() => {
       get_list_from_server();
    }, []);

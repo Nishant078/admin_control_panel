@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { make_post_request } from "./Utility";
-import $ from "jquery";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as icons from "@fortawesome/free-solid-svg-icons";
 
 const LeftPanel = (props) => {
    const { list, get_list_from_server } = props;
+   const [width, set_width] = useState(25);
+
    const add_list = async (e) => {
       if (e.key === "Enter") {
-         const list_name = $("#list_name_input").val();
+         e.preventDefault();
+         const list_name = e.target.value;
          if (/^[0-9a-zA-Z_-]+$/.test(list_name)) {
             if (!list.includes(list_name) && list_name !== "") {
                await make_post_request({
@@ -17,7 +19,7 @@ const LeftPanel = (props) => {
                   list_name: list_name,
                });
                await get_list_from_server();
-               $("#list_name_input").val("");
+               e.target.value = "";
             }
          }
       }
@@ -29,6 +31,25 @@ const LeftPanel = (props) => {
          list_name: list[index],
       });
       await get_list_from_server();
+   };
+
+   const resize_handler = (e) => {
+      let drag_start_pos = e.clientX;
+      const mousemove_handler = (e) => {
+         let change_in_x =
+            ((e.clientX - drag_start_pos) /
+               document.documentElement.clientWidth) *
+            100;
+         set_width(width + change_in_x);
+      };
+      document.addEventListener("mousemove", mousemove_handler);
+      document.addEventListener(
+         "mouseup",
+         (e) => {
+            document.removeEventListener("mousemove", mousemove_handler);
+         },
+         { once: true }
+      );
    };
 
    let list_render = [];
@@ -47,17 +68,24 @@ const LeftPanel = (props) => {
    });
 
    return (
-      <div className="admin-left">
-         <ul className="admin-listitem">{list_render}</ul>
-         <br key="br" />
-         <input
-            key="list_name_input"
-            id="list_name_input"
-            type="text"
-            placeholder="List Name"
-            onKeyPress={add_list}
+      <>
+         <div className="admin-left-panel" style={{ width: `${width}%` }}>
+            <ul className="admin-list-items">{list_render}</ul>
+            <br key="br" />
+            <input
+               key="list_name_input"
+               id="list_name_input"
+               type="text"
+               placeholder="List Name"
+               onKeyPress={add_list}
+            />
+         </div>
+         <div
+            className="admin-left-panel-resize"
+            style={{ width: "10px", backgroundColor: "#989898" }}
+            onMouseDown={resize_handler}
          />
-      </div>
+      </>
    );
 };
 

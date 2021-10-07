@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { make_post_request } from "./Utility";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,7 +6,17 @@ import * as icons from "@fortawesome/free-solid-svg-icons";
 
 const LeftPanel = (props) => {
    const { list, get_list_from_server } = props;
-   const [width, set_width] = useState(25);
+   const [width, set_width] = useState();
+
+   useEffect(() => {
+      const w = parseInt(localStorage.getItem("left_panel_width"));
+      if (w) {
+         set_width(w);
+      } else {
+         localStorage.setItem("left_panel_width", 25);
+         set_width(15);
+      }
+   }, []);
 
    const add_list = async (e) => {
       if (e.key === "Enter") {
@@ -34,18 +44,21 @@ const LeftPanel = (props) => {
    };
 
    const resize_handler = (e) => {
-      let drag_start_pos = e.clientX;
+      const drag_start_pos = e.clientX;
+      let drag_start_width = width;
       const mousemove_handler = (e) => {
          let change_in_x =
             ((e.clientX - drag_start_pos) /
                document.documentElement.clientWidth) *
             100;
-         set_width(width + change_in_x);
+         set_width(drag_start_width + change_in_x);
       };
       document.addEventListener("mousemove", mousemove_handler);
       document.addEventListener(
          "mouseup",
          (e) => {
+            console.log(width);
+            localStorage.setItem("left_panel_width", width);
             document.removeEventListener("mousemove", mousemove_handler);
          },
          { once: true }

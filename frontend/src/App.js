@@ -1,29 +1,22 @@
 import "./App.scss";
-import { useState, useEffect } from "react";
+import { useEffect, useReducer } from "react";
 import LeftPanel from "./LeftPanel";
-import { make_post_request } from "./Utility";
 import MainPanel from "./MainPanel";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { ACTION, reducer, set_dispatch } from "./GlobalState";
 
 const App = (props) => {
-   const [list, set_list] = useState([]);
+   const [state, dispatch] = useReducer(reducer, { list: [] });
 
    useEffect(() => {
-      get_list_from_server();
+      set_dispatch(dispatch);
+      dispatch({ type: ACTION.get_list });
    }, []);
-
-   const get_list_from_server = async () => {
-      const data = await make_post_request({ command: "get_list" });
-      if (data["status"] === "OK") set_list(data["list"]);
-   };
 
    return (
       <div className="admin-section">
          <Router>
-            <LeftPanel
-               list={list}
-               get_list_from_server={get_list_from_server}
-            />
+            <LeftPanel state={state} dispatch={dispatch} />
             <Route path="/" exact component={MainPanel} />
             <Route path="/:list_name" component={MainPanel} />
          </Router>

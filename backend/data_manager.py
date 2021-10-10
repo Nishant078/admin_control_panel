@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import threading
 
 
 class data_manager:
@@ -22,13 +23,15 @@ class data_manager:
         """
         self.cursor.execute(query)
         self.db_connection.commit()
+        self.lock = threading.Lock()
 
     def get_list_of_lists(self):
         query = """
             SELECT list_name FROM list_of_lists ORDER BY id
         """
-        self.cursor.execute(query)
-        list_of_lists = self.cursor.fetchall()
+        with self.lock:
+            self.cursor.execute(query)
+            list_of_lists = self.cursor.fetchall()
         list_of_lists = [l for (l,) in list_of_lists]
         return list_of_lists
 
@@ -37,9 +40,13 @@ class data_manager:
         INSERT INTO list_of_lists (list_name,structure) VALUES ("{list_name}","{str({})}")
         """
         # print(query)
-        self.cursor.execute(query)
-        self.db_connection.commit()
+        with self.lock:
+            self.cursor.execute(query)
+            self.db_connection.commit()
 
     def delete_list(self, list_name):
-        self.cursor.execute(f'DELETE FROM list_of_lists WHERE list_name="{list_name}"')
-        self.db_connection.commit()
+        with self.lock:
+            self.cursor.execute(
+                f'DELETE FROM list_of_lists WHERE list_name="{list_name}"'
+            )
+            self.db_connection.commit()

@@ -1,4 +1,5 @@
 export const make_post_request = async (body) => {
+   console.log(body);
    const request_list_options = {
       method: "post",
       headers: { "Content-Type": "application/json" },

@@ -1,6 +1,7 @@
 import sqlite3
 from flask import Flask, request, jsonify
 from data_manager import data_manager
+import threading
 
 config = {}
 app = Flask(__name__)
@@ -25,6 +26,7 @@ def handle_add_list(req):
 
 
 def handle_delete_list(req):
+    print(req)
     dm.delete_list(req["list_name"])
     res = {"status": "OK"}
     return jsonify(res)
@@ -32,6 +34,7 @@ def handle_delete_list(req):
 
 @app.route("/api", methods=["GET", "POST"])
 def api():
+    print(request.json)
     if request.method == "POST":
         if request.json["command"] == "get_list":
             return handle_get_list_of_lists()

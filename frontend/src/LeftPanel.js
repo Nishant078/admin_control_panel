@@ -1,49 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { make_post_request } from "./Utility";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as icons from "@fortawesome/free-solid-svg-icons";
+import { ACTION } from "./GlobalState";
 
 const LeftPanel = (props) => {
-   const { list, get_list_from_server } = props;
+   const { state, dispatch } = props;
+   const { list } = state;
    const [width, set_width] = useState();
 
    useEffect(() => {
-      const w = parseInt(localStorage.getItem("left_panel_width"));
-      if (w) {
-         set_width(w);
-      } else {
-         localStorage.setItem("left_panel_width", 25);
-         set_width(15);
+      let w = parseFloat(localStorage.getItem("left_panel_width"));
+      if (!w) {
+         localStorage.setItem("left_panel_width", 15);
+         w = 15;
       }
+      set_width(w);
    }, []);
+
+   useEffect(() => {
+      localStorage.setItem("left_panel_width", width);
+   }, [width]);
 
    const add_list = async (e) => {
       if (e.key === "Enter") {
          e.preventDefault();
          const list_name = e.target.value;
-         if (/^[0-9a-zA-Z_-]+$/.test(list_name)) {
-            if (!list.includes(list_name) && list_name !== "") {
-               await make_post_request({
-                  command: "add_list",
-                  list_name: list_name,
-               });
-               await get_list_from_server();
-               e.target.value = "";
-            }
+         if (/^[0-9a-zA-Z_-]+$/.test(list_name) && !list.includes(list_name)) {
+            dispatch({ type: ACTION.add_list, payload: list_name });
+            e.target.value = "";
          }
       }
    };
 
-   const delete_list_clicked = async (index) => {
-      await make_post_request({
-         command: "delete_list",
-         list_name: list[index],
-      });
-      await get_list_from_server();
-   };
-
    const resize_handler = (e) => {
+      e.preventDefault();
       const drag_start_pos = e.clientX;
       let drag_start_width = width;
       const mousemove_handler = (e) => {
@@ -57,8 +48,6 @@ const LeftPanel = (props) => {
       document.addEventListener(
          "mouseup",
          (e) => {
-            console.log(width);
-            localStorage.setItem("left_panel_width", width);
             document.removeEventListener("mousemove", mousemove_handler);
          },
          { once: true }
@@ -66,19 +55,22 @@ const LeftPanel = (props) => {
    };
 
    let list_render = [];
-   list.forEach((item, index) => {
-      list_render.push(
-         <li key={index}>
-            <Link to={`/${item}`} key={index}>
-               {item}
-            </Link>
-            <FontAwesomeIcon
-               icon={icons.faTrashAlt}
-               onClick={() => delete_list_clicked(index)}
-            />
-         </li>
-      );
-   });
+   state.list &&
+      state.list.forEach((item, index) => {
+         list_render.push(
+            <li key={index}>
+               <Link to={`/${item}`} key={index}>
+                  {item}
+               </Link>
+               <FontAwesomeIcon
+                  icon={icons.faTrashAlt}
+                  onClick={() =>
+                     dispatch({ type: ACTION.delete_list, payload: index })
+                  }
+               />
+            </li>
+         );
+      });
 
    return (
       <>

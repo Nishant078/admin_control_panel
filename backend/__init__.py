@@ -26,7 +26,6 @@ def handle_add_list(req):
 
 
 def handle_delete_list(req):
-    print(req)
     dm.delete_list(req["list_name"])
     res = {"status": "OK"}
     return jsonify(res)

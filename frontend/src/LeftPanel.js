@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as icons from "@fortawesome/free-solid-svg-icons";
-import { ACTION } from "./GlobalState";
+import { api, Context } from "./Common";
 
-const LeftPanel = (props) => {
-   const { state, dispatch } = props;
+const LeftPanel = () => {
+   // const { state, dispatch } = props;
+   const { state } = useContext(Context);
    const { list } = state;
    const [width, set_width] = useState();
 
@@ -22,12 +23,13 @@ const LeftPanel = (props) => {
       localStorage.setItem("left_panel_width", width);
    }, [width]);
 
-   const add_list = async (e) => {
+   const add_list = (e) => {
       if (e.key === "Enter") {
+         console.log(e);
          e.preventDefault();
          const list_name = e.target.value;
          if (/^[0-9a-zA-Z_-]+$/.test(list_name) && !list.includes(list_name)) {
-            dispatch({ type: ACTION.add_list, payload: list_name });
+            api.add_list(list_name);
             e.target.value = "";
          }
       }
@@ -55,7 +57,7 @@ const LeftPanel = (props) => {
    };
 
    let list_render = [];
-   state.list &&
+   if (state.list) {
       state.list.forEach((item, index) => {
          list_render.push(
             <li key={index}>
@@ -64,13 +66,14 @@ const LeftPanel = (props) => {
                </Link>
                <FontAwesomeIcon
                   icon={icons.faTrashAlt}
-                  onClick={() =>
-                     dispatch({ type: ACTION.delete_list, payload: index })
-                  }
+                  onClick={() => {
+                     api.delete_list(item);
+                  }}
                />
             </li>
          );
       });
+   }
 
    return (
       <>

@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask, request, jsonify
 from data_manager import data_manager
-import threading
 
 config = {}
 app = Flask(__name__)
